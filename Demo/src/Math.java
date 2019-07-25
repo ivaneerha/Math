@@ -1,58 +1,126 @@
 import java.util.*;
 
 public class Math {
-    private HashMap<String, Integer> allInformation;
+    private Map<GoodInformation, Set<GoodProperties>> allInformation;
 
-    public Math(HashMap<String, Integer> info) {
+    public Math(Map<GoodInformation, Set<GoodProperties>> info) {
         this.allInformation = info;
     }
 
-    public int getMaxPriceForAGood(String good, int quantity) throws Exception {
+    public double getMaxPriceForAGood(String good, int quantity) throws Exception {
 
-        Set<Integer> prices = getAllPricesPerGood(good, quantity);
+        Set<Double> prices = getAllPricesPerGood(good, quantity);
 
         if(prices.isEmpty()) {
             throw new Exception("Wrong input!");
         }
 
-        int maxSet = Collections.max(prices);
+        double maxSet = Collections.max(prices);
 
         return maxSet;
     }
 
-    public int getMinPriceForAGood(String good, int quantity) throws Exception {
+    public double getMinPriceForAGood(String good, int quantity) throws Exception {
 
-        Set<Integer> prices = getAllPricesPerGood(good, quantity);
+        Set<Double> prices = getAllPricesPerGood(good, quantity);
 
-        int minSet = Collections.min(prices);
+        double minSet = Collections.min(prices);
         return minSet;
     }
 
-    public int getAvgPriceForAGood(String good, int quantity) throws Exception {
+    public double getAvgPriceForAGood(String good, int quantity) throws Exception {
 
-        Set<Integer> prices = getAllPricesPerGood(good, quantity);
+        Set<Double> prices = getAllPricesPerGood(good, quantity);
 
-        int sum = 0;
-        for(int price : prices) {
+        double sum = 0;
+        for(double price : prices) {
             sum += price;
         }
 
-        int avg = sum / prices.size();
+        double avg = sum / prices.size();
         return avg;
     }
 
-    public Set<Integer> getAllPricesPerGood(String good, int quantity) {
-        Set<Integer> prices = new HashSet<>();
+    public Set<Double> getAllPricesPerGood(String good, int quantity) throws Exception {
+        Set<Double> prices = new HashSet<>();
 
-        for(Map.Entry<String, Integer> entry : allInformation.entrySet()) {
-            String[] splitInfo = entry.getKey().split("\\.");
+        for(Map.Entry<GoodInformation, Set<GoodProperties>> entry : allInformation.entrySet()) {
 
-            if(splitInfo[1] != null && splitInfo[2] != null
-                    && splitInfo[1].equals(good) && Integer.parseInt(splitInfo[2]) == quantity) {
-                prices.add(entry.getValue());
+            String goodFromTheMarket = entry.getKey().getGood();
+
+            Set<GoodProperties> value;
+            value = entry.getValue();
+
+            if(goodFromTheMarket.equals(good)) {
+                for (GoodProperties goodPropertie : value) {
+                    if (goodPropertie.getQuantity() == quantity) {
+                        prices.add(goodPropertie.getPrice());
+                    }
+                }
+            } else {
+                throw new Exception("Wrong input!");
             }
         }
 
         return prices;
+    }
+
+
+    public Set<GoodProperties> getAllGoodsPricesPerRegion (String origin) throws Exception {
+        Set<GoodProperties> properties = new HashSet<>();
+
+        for(Map.Entry<GoodInformation, Set<GoodProperties>> entry : allInformation.entrySet()) {
+            if(entry.getKey().getOrigin().equals(origin)) {
+                properties = entry.getValue();
+            } else {
+                throw new Exception("Wrong input!");
+            }
+        }
+
+        return properties;
+    }
+
+    public Map<String, Double> minMaxAvgForAllGoods() {
+        Map<String, Double> kkk = new HashMap<>();
+
+        Set<String> metGoodAndQuantity = new HashSet<>();
+
+        for(Map.Entry<GoodInformation, Set<GoodProperties>> entry : allInformation.entrySet()) {
+            String good = entry.getKey().getGood();
+
+            Set<GoodProperties> properties = entry.getValue();
+            int quantity = 0;
+
+            for(GoodProperties property : properties) {
+                quantity = property.getQuantity();
+                if(metGoodAndQuantity.contains(quantity + "")) {
+                    continue;
+                } else {
+                    metGoodAndQuantity.add(quantity + "");
+                }
+
+                System.out.println("ooo");
+                try{
+                    double max = getMaxPriceForAGood(good, quantity);
+                    double min = getMinPriceForAGood(good, quantity);
+                    double avg = getAvgPriceForAGood(good, quantity);
+
+                    kkk.put(good + "." + quantity + ".Min", min);
+                    kkk.put(good + "." + quantity + ".Max", max);
+                    kkk.put(good + "." + quantity + ".Avg", avg);
+
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+
+
+        }
+
+        return kkk;
+    }
+
+    public int ggg() {
+        return new Random().nextInt(100);
     }
 }

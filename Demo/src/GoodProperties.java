@@ -23,4 +23,9 @@ public class GoodProperties {
     public int getQuantity() {
         return quantity;
     }
+
+    @Override
+    public String toString() {
+        return "Quantity: " + this.getQuantity() + "  -  price: " + this.getPrice();
+    }
 }
