@@ -1,10 +1,9 @@
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class Math {
-    private ConcurrentHashMap<String, Integer> allInformation;
+    private HashMap<String, Integer> allInformation;
 
-    public Math(ConcurrentHashMap<String, Integer> info) {
+    public Math(HashMap<String, Integer> info) {
         this.allInformation = info;
     }
 
